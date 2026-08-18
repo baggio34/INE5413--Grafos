@@ -1,0 +1,9 @@
+*vertices n
+1 rotulo_de_1
+2 rotulo_de_2
+...
+n label_de_n
+*edges
+a b valor_do_peso
+a c valor_do_peso
+...
