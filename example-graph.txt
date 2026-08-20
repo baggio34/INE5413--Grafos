@@ -1,9 +1,12 @@
-*vertices n
-1 rotulo_de_1
-2 rotulo_de_2
-...
-n label_de_n
+*vertices 5
+1 v1
+2 v2
+3 v3
+4 v4
+5 v5
 *edges
-a b valor_do_peso
-a c valor_do_peso
-...
+1 2 2
+2 3 3
+3 4 4
+4 5 1
+5 1 1
