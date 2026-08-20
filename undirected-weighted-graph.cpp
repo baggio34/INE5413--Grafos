@@ -44,7 +44,7 @@ class Uwg {
         int peso();
         int lerArquivo();
 
-        std::vector<std::vector<int>> matrix;
+        std::vector<std::vector<int> > matrix;
 
 };
 
