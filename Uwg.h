@@ -24,4 +24,4 @@ class Uwg {
         bool haAresta(int u, int v);
         int peso(int u, int v);
         int lerArquivo(string path);
-}
+};

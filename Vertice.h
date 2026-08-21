@@ -1,3 +1,6 @@
+#include <string>
+using std::string;
+
 class Vertice {
     public:
         string rotulo;
@@ -7,11 +10,12 @@ class Vertice {
         int distance;
         bool known;
 
-        Vertice();
+
+        Vertice(int id, string rotulo, int grau);
         Vertice* getAncestor();
         int getDistance();
         bool getKnown();
         void setAncestor(Vertice* a);
         void setDistance(int d);
         void setKnown(bool info);
-}
+};
