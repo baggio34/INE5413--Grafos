@@ -46,8 +46,42 @@ class Vertice {
         string rotulo;
         int id;
         int grau;
+        Vertice* ancestor;
+        int distance;
+        bool known;
 
-    Vertice(int id, string rotulo, int grau) : id(id), rotulo(rotulo) , grau(grau) {}
+        Vertice(int id, string rotulo, int grau) {
+            this->id = id;
+            this->rotulo = rotulo;
+            this->grau = grau;
+            this->ancestor = nullptr;
+            this->distance = infinito;
+            this->known = false;
+        } 
+
+        Vertice* getAncestor() {
+            return ancestor;
+        };
+
+        int getDistance() {
+            return distance;
+        };
+
+        bool getKnown() {
+            return known;
+        };
+
+        void setAncestor(Vertice* a) {
+            ancestor = a;
+        };
+
+        void setDistance(int d) {
+            distance = d;
+        };
+
+        void setKnown(bool info) {
+            known = info;
+        };
 };
 
 class Uwg {
