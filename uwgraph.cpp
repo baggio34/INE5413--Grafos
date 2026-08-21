@@ -128,7 +128,9 @@ int Uwg::lerArquivo(string path) {
         std::string label;
 
         ss >> id;
-        ss >> label;
+        std::string lixo;
+        std::getline(ss, lixo, '"'); 
+        std::getline(ss, label, '"');
 
         verticesList.push_back(Vertice(id, label, 0));
     }
