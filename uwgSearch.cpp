@@ -15,11 +15,18 @@ void uwgSearch(string path, int index) {
     s.distance = 0;
     queue.push(&s);
 
-    printf("0: %d\n", s.id);
+    int currentDistance = 0;
+    bool first = true;
 
     while (!queue.empty()) {
         Vertice* u = queue.front();
-        vector<int> ids;
+        
+        if (currentDistance == u->distance) { 
+            if (currentDistance != 0) {printf("\n");}
+            printf("%d: ", u->distance);
+            currentDistance += 1;
+            first = true;
+        }
         queue.pop();
         
         vector<Vertice> neighborhood = graph.vizinhos(u->id-1);
@@ -32,19 +39,18 @@ void uwgSearch(string path, int index) {
                 realV.distance = u->distance + 1;
                 realV.ancestor = u;
                 queue.push(&realV);
-                ids.push_back(realV.id);
             }
         }
 
-        if (!ids.empty()) {
-
-            printf("%d: ", u->distance+1);
-            for (size_t i = 0; i < ids.size(); ++i) {
-                printf("%d%s", ids[i], (i == ids.size() - 1) ? "" : " ");
-            }
-            printf("\n");
+        if (first) {
+            printf("%d", u->id);
+            first = false;
+        } else {
+            printf(", %d", u->id);
         }
     }
+
+    printf("\n");
 
 } 
 
