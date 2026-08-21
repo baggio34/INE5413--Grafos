@@ -12,6 +12,9 @@ void uswSearch(string path, int index) {
     s.distance = 0;
     queue.push(&s);
 
-    while (!queue.empty)
+    while (!queue.empty()) {
+        Vertice* u = queue.pop();
+        
+    }
 
 } 
