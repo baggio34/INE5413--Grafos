@@ -77,18 +77,18 @@ vector<Vertice> Uwg::vizinhos(int v) {
     vector<Vertice> vec;
     
     for (int i = 0; i < this->nVertices; i++) {
-        if (matrix[v][i] != 0) vec.push_back(verticesList[i]);
+        if (matrix[v][i] != infinito) vec.push_back(verticesList[i]);
     }
 
     return vec;
 }
 
 bool Uwg::haAresta(int u, int v) {
-    return (this->matrix[u][v] != 0);
+    return (this->matrix[u][v] != infinito);
 }
 
 int Uwg::peso(int u, int v) {
-    return(this->matrix[u][v] != 0) ? matrix[u][v] : infinito;
+    return(this->matrix[u][v] != infinito) ? matrix[u][v] : infinito;
 }
 
 int Uwg::lerArquivo(string path) {
@@ -113,7 +113,7 @@ int Uwg::lerArquivo(string path) {
             ss >> vertices;
             this->nVertices = vertices;
 
-            matrix.assign(vertices, std::vector<int>(vertices, 0));
+            matrix.assign(vertices, std::vector<int>(vertices, infinito));
             break;
         }
     }
@@ -193,7 +193,7 @@ int main() {
     // 3. vizinhos(v)
     std::cout << "--- Vizinhos do Vertice 0 ---\n";
     if (g.qtdVertices() > 0) {
-        vector<Vertice> viz = g.vizinhos(0);
+        vector<Vertice> viz = g.(0);
         std::cout << "Vizinhos de " << g.rotulo(0) << ": ";
         for (const auto& v : viz) {
             std::cout << v.rotulo << " (id: " << v.id << ") ";
