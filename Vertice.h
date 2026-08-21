@@ -1,3 +1,7 @@
+#ifndef VERTICE_H
+#define VERTICE_H
+
+
 #include <string>
 using std::string;
 
@@ -19,3 +23,5 @@ class Vertice {
         void setDistance(int d);
         void setKnown(bool info);
 };
+
+#endif

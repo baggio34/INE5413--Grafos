@@ -1,3 +1,7 @@
+#ifndef UWG_H
+#define UWG_H
+
+
 #include <vector>
 #include <iostream>
 #include <string>
@@ -25,3 +29,5 @@ class Uwg {
         int peso(int u, int v);
         int lerArquivo(string path);
 };
+
+#endif

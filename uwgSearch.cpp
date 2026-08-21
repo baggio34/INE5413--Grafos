@@ -1,4 +1,5 @@
 #include "Uwg.h" 
+#include "uwgraph.cpp"
 #include <queue>
 #include <vector>
 
@@ -54,9 +55,16 @@ void uwgSearch(string path, int index) {
 
 } 
 
-int main() {
-    std::string filePath = "example-graph.txt";
-    int startIndex = 0;
+int main(int argc, char* argv[]) {
+    
+    if (argc < 3) {
+        std::cout << "./main <arquivo_do_grafo> <vertice_inicial>\n";
+        return 1; // encerra  se faltar
+    }
+
+    std::string filePath = argv[1];
+
+    int startIndex = std::stoi(argv[2]) - 1;
 
     uwgSearch(filePath, startIndex);
 
