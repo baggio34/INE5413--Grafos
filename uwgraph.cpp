@@ -20,7 +20,7 @@ Vertice::Vertice(int id, string rotulo, int grau) {
     this->rotulo = rotulo;
     this->grau = grau;
     this->ancestor = nullptr;
-    this->distance = infinito;
+    this->distance = distance;
     this->known = false;
 }
 
