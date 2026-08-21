@@ -11,7 +11,7 @@ using std::string;
 using std::array;
 using std::vector;
 
-const int infinito = std::numeric_limits<int>::max();
+const double infinito = std::numeric_limits<double>::infinity();
 
 // --- MÉTODOS DA CLASSE VERTICE ---
 
@@ -87,7 +87,7 @@ bool Uwg::haAresta(int u, int v) {
     return (this->matrix[u][v] != infinito);
 }
 
-int Uwg::peso(int u, int v) {
+double Uwg::peso(int u, int v) {
     return(this->matrix[u][v] != infinito) ? matrix[u][v] : infinito;
 }
 
@@ -113,7 +113,7 @@ int Uwg::lerArquivo(string path) {
             ss >> vertices;
             this->nVertices = vertices;
 
-            matrix.assign(vertices, std::vector<int>(vertices, infinito));
+            matrix.assign(vertices, std::vector<double>(vertices, infinito));
             break;
         }
     }

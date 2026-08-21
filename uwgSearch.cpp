@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
 
     std::string filePath = argv[1];
 
-    int startIndex = std::stoi(argv[2]) - 1;
+    int startIndex = std::stoi(argv[2]) - 1 ;
 
     uwgSearch(filePath, startIndex);
 

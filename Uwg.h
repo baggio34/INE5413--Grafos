@@ -16,7 +16,7 @@ class Uwg {
         int nVertices;
         std::vector<Vertice> verticesList;
         int nArestas;
-        std::vector<std::vector<int> > matrix;
+        std::vector<std::vector<double> > matrix;
 
 
         Uwg();
@@ -26,7 +26,7 @@ class Uwg {
         string rotulo(int v);
         vector<Vertice> vizinhos(int v); 
         bool haAresta(int u, int v);
-        int peso(int u, int v);
+        double peso(int u, int v);
         int lerArquivo(string path);
 };
 
