@@ -24,7 +24,7 @@ void uwgSearch(string path, int index) {
         
         if (currentDistance == u->distance) { 
             if (currentDistance != 0) {printf("\n");}
-            printf("%d: ", u->distance);
+            printf("%.0f: ", u->distance);
             currentDistance += 1;
             first = true;
         }

@@ -11,7 +11,7 @@ using std::string;
 using std::array;
 using std::vector;
 
-const double infinito = std::numeric_limits<double>::infinity();
+const double infinito = std::numeric_limits<double>::max();
 
 // --- MÉTODOS DA CLASSE VERTICE ---
 
@@ -20,7 +20,7 @@ Vertice::Vertice(int id, string rotulo, int grau) {
     this->rotulo = rotulo;
     this->grau = grau;
     this->ancestor = nullptr;
-    this->distance = distance;
+    this->distance = infinito;
     this->known = false;
 }
 
@@ -77,18 +77,18 @@ vector<Vertice> Uwg::vizinhos(int v) {
     vector<Vertice> vec;
     
     for (int i = 0; i < this->nVertices; i++) {
-        if (matrix[v][i] != infinito) vec.push_back(verticesList[i]);
+        if (matrix[v][i] != 0) vec.push_back(verticesList[i]);
     }
 
     return vec;
 }
 
 bool Uwg::haAresta(int u, int v) {
-    return (this->matrix[u][v] != infinito);
+    return (this->matrix[u][v] != 0);
 }
 
 double Uwg::peso(int u, int v) {
-    return(this->matrix[u][v] != infinito) ? matrix[u][v] : infinito;
+    return(this->matrix[u][v] != 0) ? matrix[u][v] : infinito;
 }
 
 int Uwg::lerArquivo(string path) {
@@ -113,7 +113,7 @@ int Uwg::lerArquivo(string path) {
             ss >> vertices;
             this->nVertices = vertices;
 
-            matrix.assign(vertices, std::vector<double>(vertices, infinito));
+            matrix.assign(vertices, std::vector<double>(vertices, 0));
             break;
         }
     }
