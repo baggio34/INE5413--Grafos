@@ -1,4 +1,5 @@
 #include "Uwg.h" 
+#include "uwgraph.cpp"
 #include <queue>
 #include <vector>
 
@@ -15,13 +16,18 @@ void uwgSearch(string path, int index) {
     s.distance = 0;
     queue.push(&s);
 
-    vector<vector<int>> levels;
-    levels.push_back({s.id});
-
+    int currentDistance = 0;
+    bool first = true;
 
     while (!queue.empty()) {
         Vertice* u = queue.front();
-        vector<int> ids;
+        
+        if (currentDistance == u->distance) { 
+            if (currentDistance != 0) {printf("\n");}
+            printf("%.0f: ", u->distance);
+            currentDistance += 1;
+            first = true;
+        }
         queue.pop();
         
         vector<Vertice> neighborhood = graph.vizinhos(u->id-1);
@@ -34,30 +40,31 @@ void uwgSearch(string path, int index) {
                 realV.distance = u->distance + 1;
                 realV.ancestor = u;
                 queue.push(&realV);
-                ids.push_back(realV.id);
-                
-                if (levels.size() <= (size_t)realV.distance) {
-                    levels.resize(realV.distance + 1);
-                }
-                levels[realV.distance].push_back(realV.id);
             }
         }
 
-    }
-    for (size_t d = 0; d < levels.size(); ++d) {
-        if (!levels[d].empty()) {
-            printf("%zu: ", d);
-            for (size_t i = 0; i < levels[d].size(); ++i) {
-                printf("%d%s", levels[d][i], (i == levels[d].size() - 1) ? "" : " ");
-            }
-            printf("\n");
+        if (first) {
+            printf("%d", u->id);
+            first = false;
+        } else {
+            printf(", %d", u->id);
         }
     }
-}
 
-int main() {
-    std::string filePath = "example-graph.txt";
-    int startIndex = 0;
+    printf("\n");
+
+} 
+
+int main(int argc, char* argv[]) {
+    
+    if (argc < 3) {
+        std::cout << "./main <arquivo_do_grafo> <vertice_inicial>\n";
+        return 1; // encerra  se faltar
+    }
+
+    std::string filePath = argv[1];
+
+    int startIndex = std::stoi(argv[2]) - 1 ;
 
     uwgSearch(filePath, startIndex);
 

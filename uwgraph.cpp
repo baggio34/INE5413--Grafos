@@ -11,7 +11,7 @@ using std::string;
 using std::array;
 using std::vector;
 
-const int infinito = std::numeric_limits<int>::max();
+const double infinito = std::numeric_limits<double>::max();
 
 // --- MÉTODOS DA CLASSE VERTICE ---
 
@@ -87,7 +87,7 @@ bool Uwg::haAresta(int u, int v) {
     return (this->matrix[u][v] != 0);
 }
 
-int Uwg::peso(int u, int v) {
+double Uwg::peso(int u, int v) {
     return(this->matrix[u][v] != 0) ? matrix[u][v] : infinito;
 }
 
@@ -113,7 +113,7 @@ int Uwg::lerArquivo(string path) {
             ss >> vertices;
             this->nVertices = vertices;
 
-            matrix.assign(vertices, std::vector<int>(vertices, 0));
+            matrix.assign(vertices, std::vector<double>(vertices, 0));
             break;
         }
     }
@@ -128,7 +128,9 @@ int Uwg::lerArquivo(string path) {
         std::string label;
 
         ss >> id;
-        ss >> label;
+        std::string lixo;
+        std::getline(ss, lixo, '"'); 
+        std::getline(ss, label, '"');
 
         verticesList.push_back(Vertice(id, label, 0));
     }
@@ -193,7 +195,7 @@ int main() {
     // 3. vizinhos(v)
     std::cout << "--- Vizinhos do Vertice 0 ---\n";
     if (g.qtdVertices() > 0) {
-        vector<Vertice> viz = g.vizinhos(0);
+        vector<Vertice> viz = g.(0);
         std::cout << "Vizinhos de " << g.rotulo(0) << ": ";
         for (const auto& v : viz) {
             std::cout << v.rotulo << " (id: " << v.id << ") ";

@@ -1,3 +1,7 @@
+#ifndef VERTICE_H
+#define VERTICE_H
+
+
 #include <string>
 using std::string;
 
@@ -7,7 +11,7 @@ class Vertice {
         int id;
         int grau;
         Vertice* ancestor;
-        int distance;
+        double distance;
         bool known;
 
 
@@ -19,3 +23,5 @@ class Vertice {
         void setDistance(int d);
         void setKnown(bool info);
 };
+
+#endif
