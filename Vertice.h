@@ -11,7 +11,7 @@ class Vertice {
         int id;
         int grau;
         Vertice* ancestor;
-        double distance;
+        int distance;
         bool known;
 
 

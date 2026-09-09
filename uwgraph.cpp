@@ -11,7 +11,8 @@ using std::string;
 using std::array;
 using std::vector;
 
-const double infinito = std::numeric_limits<double>::max();
+// Definição global de infinito para tratamento de arestas inexistentes
+const double infinito = std::numeric_limits<double>::infinity();
 
 // --- MÉTODOS DA CLASSE VERTICE ---
 
@@ -20,79 +21,62 @@ Vertice::Vertice(int id, string rotulo, int grau) {
     this->rotulo = rotulo;
     this->grau = grau;
     this->ancestor = nullptr;
-    this->distance = infinito;
+    this->distance = std::numeric_limits<int>::max(); 
     this->known = false;
 }
 
+// Getters
+Vertice* Vertice::getAncestor() { return ancestor; }
+int Vertice::getDistance() { return distance; }
+bool Vertice::getKnown() { return known; }
 
-Vertice* Vertice::getAncestor() {
-    return ancestor;
-}
-
-int Vertice::getDistance() {
-    return distance;
-}
-
-bool Vertice::getKnown() {
-    return known;
-}
-
-void Vertice::setAncestor(Vertice* a) {
-    ancestor = a;
-}
-
-void Vertice::setDistance(int d) {
-    distance = d;
-}
-
-void Vertice::setKnown(bool info) {
-    known = info;
-}
-
+// Setters
+void Vertice::setAncestor(Vertice* a) { ancestor = a; }
+void Vertice::setDistance(int d) { distance = d; }
+void Vertice::setKnown(bool info) { known = info; }
 
 // --- MÉTODOS DA CLASSE UWG ---
 
+// Construtor padrão
 Uwg::Uwg() {
     nVertices = 0;
     nArestas = 0;
 }
 
-int Uwg::qtdVertices() {
-    return this->nVertices;
-}
+// Retorna a quantidade total de vértices
+int Uwg::qtdVertices() { return this->nVertices; }
 
-int Uwg::qtdArestas() {
-    return this->nArestas;
-}
+// Retorna a quantidade total de arestas
+int Uwg::qtdArestas() { return this->nArestas; }
 
-int Uwg::grau(int v) {
-    return this->verticesList[v].grau;
-}
+// Retorna o grau de um vértice específico
+int Uwg::grau(int v) { return this->verticesList[v].grau; }
 
-string Uwg::rotulo(int v) {
-    return this->verticesList[v].rotulo;
-}
+// Retorna o rótulo de um vértice específico
+string Uwg::rotulo(int v) { return this->verticesList[v].rotulo; }
 
+// Retorna um vetor com os vértices vizinhos
 vector<Vertice> Uwg::vizinhos(int v) {
     vector<Vertice> vec;
+    vec.reserve(this->grau(v)); // Evita realocações dinâmicas reservando o tamanho exato do grau
     
     for (int i = 0; i < this->nVertices; i++) {
-        if (matrix[v][i] != 0) vec.push_back(verticesList[i]);
+        if (matrix[v][i] != infinito) {
+            vec.push_back(verticesList[i]);
+        }
     }
 
     return vec;
 }
 
-bool Uwg::haAresta(int u, int v) {
-    return (this->matrix[u][v] != 0);
-}
+// Verifica se existe aresta entre os vértices u e v
+bool Uwg::haAresta(int u, int v) { return (this->matrix[u][v] != infinito); }
 
-double Uwg::peso(int u, int v) {
-    return(this->matrix[u][v] != 0) ? matrix[u][v] : infinito;
-}
+// Retorna o peso da aresta {u, v} ou infinito se ela não existir
+double Uwg::peso(int u, int v) { return(this->matrix[u][v] != infinito) ? matrix[u][v] : infinito; }
 
 int Uwg::lerArquivo(string path) {
-    int vertices;
+    int vertices = 0;
     std::string line;
 
     std::ifstream file(path);
@@ -102,53 +86,74 @@ int Uwg::lerArquivo(string path) {
         return 1;
     }
 
-    // procura *vertices
     while (std::getline(file, line)) {
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
         std::stringstream ss(line);
         std::string comando;
-
         ss >> comando;
 
         if (comando == "*vertices") {
             ss >> vertices;
             this->nVertices = vertices;
-
-            matrix.assign(vertices, std::vector<double>(vertices, 0));
+            matrix.assign(vertices, std::vector<double>(vertices, infinito));
             break;
         }
     }
 
-    // le os n vertices
     for (int i = 0; i < vertices; i++) {
-        std::getline(file, line);
+        if (!std::getline(file, line)) break;
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
 
         std::stringstream ss(line);
-
         int id;
-        std::string label;
-
+        string label = "";
         ss >> id;
-        std::string lixo;
-        std::getline(ss, lixo, '"'); 
-        std::getline(ss, label, '"');
+
+        size_t firstQuote = line.find('"');
+        if (firstQuote != std::string::npos) {
+            size_t secondQuote = line.find('"', firstQuote + 1);
+            if (secondQuote != std::string::npos) {
+                label = line.substr(firstQuote + 1, secondQuote - firstQuote - 1);
+            } else {
+                label = line.substr(firstQuote + 1);
+            }
+        } else {
+            ss >> label;
+            if (label.empty()) {
+                label = std::to_string(id);
+            }
+        }
 
         verticesList.push_back(Vertice(id, label, 0));
     }
 
-    // procura *edges
     while (std::getline(file, line)) {
-        if (line == "*edges") {
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
+        // Remove espaços à esquerda/direita se necessário ou compara prefixo
+        if (line.rfind("*edges", 0) == 0) {
             break;
         }
     }
 
-    // le as arestas
     while (std::getline(file, line)) {
-        std::stringstream ss(line);
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
+        if (line.empty()) continue;
 
+        std::stringstream ss(line);
         int a, b;
         double peso;
-        ss >> a >> b >> peso;
+        
+        if (!(ss >> a >> b >> peso)) continue; // Ignora linhas inválidas/vazias
+        
+        // Grafo não-dirigido: preenche simetricamente
         matrix[a-1][b-1] = peso;
         matrix[b-1][a-1] = peso;
         verticesList[a-1].grau++;
@@ -159,6 +164,10 @@ int Uwg::lerArquivo(string path) {
     file.close();
     return 0;
 }
+
+
+
+
 /*
 int main() {
     Uwg g;

@@ -1,132 +1,130 @@
-#include "Uwg.h" 
+#include "Uwg.h"
 #include "uwgraph.cpp"
 #include "Vertice.h"
 #include <queue>
 #include <vector>
+#include <algorithm> 
 
 using std::vector;
 
-struct returnType
-{
+
+// Estrutura de retorno para encapsular o resultado: 
+// indica se o ciclo existe e armazena a sequência de vértices caso exista.
+struct returnType {
     bool exist;
     vector<int> ciclo;
 };
 
-returnType SearchSubCicle(Uwg& G, Vertice v, vector<vector<double> >& C);
-
-
 returnType HierholzerAlgorithm(Uwg* graph) {
-    returnType finalValues;
-    std::vector<std::vector<double> > matr;
-
-    matr.assign(graph->nVertices, std::vector<double>(graph->nVertices, 0));
-
-    // nˆ2 T-T
-    // preencher a matriz
-    for (int i = 0; i < graph->nVertices; i++) {
-        for (int j = 0; j < graph->nVertices; j++) {
-            if (graph->matrix[i][j] != 0) matr[i][j] = 1; else matr[i][j] = 0;
-        }
-    }
-    // grafo vazio
-    if (graph->nArestas == 0) {
-        finalValues.exist = true;
-        return finalValues;
-    }
-
-    Vertice initialVertice(999, "v", 0);
-    // escolher o vértice inicial conectado
-    for (int i = 0; i < graph->nVertices; i++) {
-        if (graph->grau(i) > 0) {
-            initialVertice = graph->verticesList[i];
-            break;
-        }
-    }
-
-    returnType returned = SearchSubCicle(*graph, initialVertice, matr);
-
-
     returnType ret;
-    ret.exist = false;
+    ret.exist = true;
 
-    if (returned.exist == false) {
+    // 1. Grafo vazio
+    if (graph->nArestas == 0) {
+        ret.exist = true;
         return ret;
     }
 
+    // 2. Condição de Euler: Verificar se todos os vértices têm grau par
+    int start_v = -1;
     for (int i = 0; i < graph->nVertices; i++) {
-        for (int j = 0; j < graph->nVertices; j++) {
-            if(matr[i][j] != 0) return ret;
-        }
-    }
-
-    return returned;
-}
-
-returnType SearchSubCicle(Uwg& G, Vertice v, vector<vector<double> >& C) {
-    returnType ret;
-    ret.exist = true;
-    ret.ciclo.push_back(v.id);
-    size_t arestaCoord[2];
-
-    Vertice temp = v;
-    bool finded = false;
-
-    while (!finded) {
-        bool edge_found = false;
-        for (size_t i = 0; i < G.nVertices; i++) {
-            if (C[v.id - 1][i] > 0) {
-                arestaCoord[0] = v.id - 1;
-                arestaCoord[1] = i;
-                edge_found = true;
-                break;
-            }
-        }
-        if (!edge_found) {
+        if (graph->grau(i) % 2 != 0) {
             ret.exist = false;
-            ret.ciclo.clear();
             return ret;
         }
-
-        C[arestaCoord[0]][arestaCoord[1]]--;
-        C[arestaCoord[1]][arestaCoord[0]]--;
-
-        v = G.verticesList[arestaCoord[1]];
-        ret.ciclo.push_back(v.id);
-
-        if (v.id == temp.id) finded = true;
+        if (graph->grau(i) > 0 && start_v == -1) {
+            start_v = i; // Define o primeiro vértice conectado como início
+        }
     }
 
-    for (size_t i = 0; i < ret.ciclo.size(); i++) {
-        int x_id = ret.ciclo[i];
-        int x_matrix_idx = x_id - 1;
+    if (start_v == -1) {
+        ret.exist = false;
+        return ret;
+    }
 
-        bool hasRemainingEdge = false;
-        for (int j = 0; j < G.nVertices; j++) {
-            if (C[x_matrix_idx][j] > 0) {
-                hasRemainingEdge = true;
+    // 3. Validação de Conexidade (Garante que todas as arestas/vértices com grau > 0 pertencem à mesma componente)
+    vector<bool> visited(graph->nVertices, false);
+    std::queue<int> q;
+    q.push(start_v);
+    visited[start_v] = true;
+    int visitedCount = 0;
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        visitedCount++;
+        for (int v = 0; v < graph->nVertices; v++) {
+            if (graph->haAresta(u, v) && !visited[v]) {
+                visited[v] = true;
+                q.push(v);
+            }
+        }
+    }
+
+    int totalVerticesComArestas = 0;
+    for (int i = 0; i < graph->nVertices; i++) {
+        if (graph->grau(i) > 0) totalVerticesComArestas++;
+    }
+
+    // Se houver vértices com arestas que não foram alcançados, o grafo é desconexo
+    if (visitedCount != totalVerticesComArestas) {
+        ret.exist = false;
+        return ret;
+    }
+
+    // 4. Algoritmo de Hierholzer iterativo (Pilha)
+    vector<int> curr_path;
+    vector<int> circuit;
+    curr_path.push_back(start_v);
+
+    // Matriz booleana de existência de arestas para "consumir" durante a busca.
+    vector<vector<bool> > edges(graph->nVertices, vector<bool>(graph->nVertices, false));
+    for (int i = 0; i < graph->nVertices; i++) {
+        for (int j = 0; j < graph->nVertices; j++) {
+            edges[i][j] = graph->haAresta(i, j);
+        }
+    }
+
+    while (!curr_path.empty()) {
+        int curr_v = curr_path.back();
+        bool has_edge = false;
+
+        // Procura a próxima aresta adjacente
+        for (int next_v = 0; next_v < graph->nVertices; next_v++) {
+            if (edges[curr_v][next_v]) {
+                // Remove a aresta (grafo não-dirigido)
+                edges[curr_v][next_v] = false;
+                edges[next_v][curr_v] = false;
+                
+                curr_path.push_back(next_v);
+                has_edge = true;
                 break;
             }
         }
 
-        if (hasRemainingEdge) {
-            returnType sub_ret = SearchSubCicle(G, G.verticesList[x_matrix_idx], C);
-
-            if (!sub_ret.exist) {
-                ret.exist = false;
-                ret.ciclo.clear();
-                return ret;
-            }
-
-            ret.ciclo.erase(ret.ciclo.begin() + i);
-            ret.ciclo.insert(ret.ciclo.begin() + i, sub_ret.ciclo.begin(), sub_ret.ciclo.end());
-
+        // Se não houver mais arestas, o vértice atual entra no circuito final
+        if (!has_edge) {
+            circuit.push_back(graph->verticesList[curr_v].id);
+            curr_path.pop_back();
         }
     }
 
+    // 5. Verificação de segurança final de arestas residuais
+    for (int i = 0; i < graph->nVertices; i++) {
+        for (int j = 0; j < graph->nVertices; j++) {
+            if (edges[i][j]) {
+                ret.exist = false;
+                return ret;
+            }
+        }
+    }
+
+    // O circuito é construído de trás para frente, então o revertemos
+    std::reverse(circuit.begin(), circuit.end());
+    ret.ciclo = circuit;
+
     return ret;
-
 }
-
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -142,7 +140,6 @@ int main(int argc, char* argv[]) {
     }
 
     returnType result = HierholzerAlgorithm(&graph);
-
     
     if (!result.exist) {
         std::cout << "0\n";
