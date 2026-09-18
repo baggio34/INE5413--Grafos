@@ -25,15 +25,7 @@ Vertice::Vertice(int id, string rotulo, int grau) {
     this->known = false;
 }
 
-// Getters
-Vertice* Vertice::getAncestor() { return ancestor; }
-int Vertice::getDistance() { return distance; }
-bool Vertice::getKnown() { return known; }
 
-// Setters
-void Vertice::setAncestor(Vertice* a) { ancestor = a; }
-void Vertice::setDistance(int d) { distance = d; }
-void Vertice::setKnown(bool info) { known = info; }
 
 // --- MÉTODOS DA CLASSE UWG ---
 
