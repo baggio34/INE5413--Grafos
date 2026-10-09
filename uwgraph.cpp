@@ -128,7 +128,7 @@ int Uwg::lerArquivo(string path) {
             line.pop_back();
         }
         // Remove espaços à esquerda/direita se necessário ou compara prefixo
-        if (line.rfind("*edges", 0) == 0) {
+        if (line.rfind("*arcs", 0) == 0) {
             break;
         }
     }
@@ -147,7 +147,7 @@ int Uwg::lerArquivo(string path) {
         
         // Grafo não-dirigido: preenche simetricamente
         matrix[a-1][b-1] = peso;
-        matrix[b-1][a-1] = peso;
+        // matrix[b-1][a-1] = peso;  // descomentar em caso de ser não direcionado
         verticesList[a-1].grau++;
         verticesList[b-1].grau++;
         nArestas++;

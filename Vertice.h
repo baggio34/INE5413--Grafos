@@ -13,6 +13,7 @@ class Vertice {
         Vertice* ancestor;
         int distance;
         bool known;
+        int time;
 
 
         Vertice(int id, string rotulo, int grau);
