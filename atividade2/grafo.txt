@@ -1,0 +1,18 @@
+*vertices 8
+1 Acordar
+2 Desligar despertador
+3 Levantar da cama
+4 Tomar banho
+5 Preparar cafe
+6 Tomar cafe da manha
+7 Vestir uniforme
+8 Fechar casa
+*arcs
+1 2 1
+2 3 1
+3 4 1
+3 5 1
+5 6 1
+4 7 1
+6 8 1
+7 8 1

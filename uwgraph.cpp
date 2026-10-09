@@ -70,7 +70,7 @@ double Uwg::peso(int u, int v) { return(this->matrix[u][v] != infinito) ? matrix
 int Uwg::lerArquivo(string path) {
     int vertices = 0;
     std::string line;
-
+    bool directional = false;
     std::ifstream file(path);
 
     if (!file.is_open()) {
@@ -114,7 +114,7 @@ int Uwg::lerArquivo(string path) {
                 label = line.substr(firstQuote + 1);
             }
         } else {
-            ss >> label;
+            std::getline(ss >> std::ws, label);
             if (label.empty()) {
                 label = std::to_string(id);
             }
@@ -129,6 +129,9 @@ int Uwg::lerArquivo(string path) {
         }
         // Remove espaços à esquerda/direita se necessário ou compara prefixo
         if (line.rfind("*arcs", 0) == 0) {
+            directional = true; 
+            break;
+        } else if (line.rfind("*edges", 0) == 0){
             break;
         }
     }
@@ -145,9 +148,8 @@ int Uwg::lerArquivo(string path) {
         
         if (!(ss >> a >> b >> peso)) continue; // Ignora linhas inválidas/vazias
         
-        // Grafo não-dirigido: preenche simetricamente
         matrix[a-1][b-1] = peso;
-        // matrix[b-1][a-1] = peso;  // descomentar em caso de ser não direcionado
+        if (!directional) matrix[b-1][a-1] = peso;  
         verticesList[a-1].grau++;
         verticesList[b-1].grau++;
         nArestas++;
