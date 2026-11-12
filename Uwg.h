@@ -28,6 +28,8 @@ class Uwg {
         bool haAresta(int u, int v);
         double peso(int u, int v);
         int lerArquivo(string path);
+
+        vector<Vertice> vizinhosSaintes(int id);
 };
 
 #endif

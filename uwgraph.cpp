@@ -61,6 +61,23 @@ vector<Vertice> Uwg::vizinhos(int v) {
     return vec;
 }
 
+
+// retorna os vizinhos saintes de um vértice v
+vector<Vertice> Uwg::vizinhosSaintes(int id) {
+    vector<Vertice> vector;
+
+    
+    for (int j = 0; j < this->nVertices; j++) {
+        if (this->matrix[id][j] != infinito) {
+            vector.push_back(this->verticesList[j]);
+        }
+    }
+
+    return vector;
+}
+
+
+
 // Verifica se existe aresta entre os vértices u e v
 bool Uwg::haAresta(int u, int v) { return (this->matrix[u][v] != infinito); }
 
